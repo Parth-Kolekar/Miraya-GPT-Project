@@ -27,3 +27,42 @@ python sample.py --out_dir=out-tinystories --device=cpu
 
 decent output:
 python sample.py --out_dir=out-tinystories --device=cpu --dtype=float32 --temperature=0.6 --top_k=40 --max_new_tokens=300
+
+
+_________________________________________________
+
+
+DATABRICKS dOLLY DATASETS  
+
+CPU
+(what i did)
+python data/dolly_prepare.py ->1
+
+python train.py config/train_tinystories.py --dataset=dolly --device=cpu --dtype=float32 --compile=False --max_iters=5000 --block_size=128 --batch_size=8 --gradient_accumulation_steps=16   ->2
+
+-------------------
+
+WE ARE USING FINE-TUNE 
+
+Commands to Run (On the RTX 4060 Laptop)
+ensure your Python environment is active.
+1. Install/Update Requirements (Ensure you have the GPU version of PyTorch. If unsure, run the first command, otherwise skip to pip install).
+
+# Optional: Install GPU PyTorch if you haven't (Copy-paste this exact line for Windows)
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# Install other dependencies
+pip install tiktoken datasets transformers
+
+
+2. Prepare the Data
+python data/dolly_prepare.py
+
+3. Run Training (Fine-Tuning) This will download GPT-2, load it onto your RTX 4060, and train it on the Dolly dataset.
+
+python train.py config/finetune_dolly.py
+
+Note: If you see an error about torch.compile not being supported on Windows, open config/finetune_dolly.py and change compile = True to compile = False.
+
+4. Chat with your AI
+python chat.py
